@@ -6,6 +6,7 @@ import './scss/TodoItem.scss';
 
 const TodoItem = ({ item, remove, check }) => {
   const { id, title, done } = item;
+
   return (
     <li className='todo-list-item'>
       <div
@@ -24,5 +25,4 @@ const TodoItem = ({ item, remove, check }) => {
     </li>
   );
 };
-
 export default TodoItem;

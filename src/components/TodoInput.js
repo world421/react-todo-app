@@ -23,7 +23,7 @@ const TodoInput = ({ addTodo }) => {
 
   //submit 이벤트 핸들러
   const submitHandler = (e) => {
-    e.preventDefalut(); // 태그의 기본 기능 제한 (submit 막기)
+    e.preventDefault(); // 태그의 기본 기능 제한 (submit 막기)
 
     // 부모 컴포넌트가 전달한 함수의 매개값으로 입력값 넘기기.
     addTodo(todoText);
