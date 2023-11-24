@@ -1,36 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import TodoInput from './TodoInput';
 import TodoMain from './TodoMain';
 import TodoHeader from './TodoHeader';
 import './scss/TodoTemplate.scss';
+import { json } from 'react-router-dom';
 
 const TodoTemplate = () => {
   // 서버에 할 일 목록 (json) 을 요청(fetch) 해서 받아와야 함.
+  const API_BASE_URL = 'http://localhost:8181/api/todos';
 
   // todos 배열을 상태 관리
-
-  const [todos, setTodos] = useState([
-    {
-      id: 1,
-      title: '산책하기',
-      done: true,
-    },
-    {
-      id: 2,
-      title: '오늘 주간 신문 읽기',
-      done: true,
-    },
-    {
-      id: 3,
-      title: '햄버거 만들어먹기',
-      done: false,
-    },
-    {
-      id: 4,
-      title: 'React 복습하기',
-      done: false,
-    },
-  ]);
+  const [todos, setTodos] = useState([]);
 
   // id값 시퀀스 함수
   const makeNewId = () => {
@@ -49,28 +29,53 @@ const TodoTemplate = () => {
 
   const addTodo = (todoText) => {
     const newTodo = {
-      id: makeNewId(),
       title: todoText,
-      done: false,
     }; // fetch를 이용해서 백엔드에 insert 요청 보내야됨.
 
     // todos.push(newTodo); (x) ->useState 변수는 setter로 변경
     // setTodos(newTodo); (x)
     // react의 상태변수는 불변성 (immutable) 을 가지기 때문에
     // 기존 상태에서 변경은 불가능 - > 새로운 상태로 만들어서 변경해야 한다.
-    setTodos((oldTodos) => {
-      // 가장 최신의 상태
-      return [...oldTodos, newTodo]; // 배열로 갈아끼워야함 !
-    });
+    // setTodos((oldTodos) => {
+    //   // 가장 최신의 상태, 변경상태로 저장되기전 가장 최신값 !!
+    //   return [...oldTodos, newTodo]; // 배열로 갈아끼워야함 !
+    // });
+
+    fetch(API_BASE_URL, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(newTodo),
+    })
+      .then((res) => res.json())
+      .then((json) => {
+        setTodos(json.todos);
+      });
   };
 
   // 할 일 삭제 처리 함수
   const removeTodo = (id) => {
     // 주어진 배열의 값들을 순회하여 조건에 맞는 요소들만 모아서 새로운 배열로 리턴.
-    setTodos(todos.filter((todo) => todo.id !== id));
+    //setTodos(todos.filter((todo) => todo.id !== id));
+    fetch(`${API_BASE_URL}/${id}`, {
+      method: 'DELETE',
+    })
+      .then((res) => res.json())
+      .then((json) => {
+        setTodos(json.todos);
+      });
   };
   // 할 일 체크 처리 함수
-  const checkTodo = (id) => {
+  const checkTodo = (id, done) => {
+    fetch(API_BASE_URL, {
+      method: 'PUT',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        done: !done,
+        id: id,
+      }),
+    })
+      .then((res) => res.json())
+      .then((json) => setTodos(json.todos));
     /* const copytoods = [...todos];
     for (let ctodo of copytoods) {
       if (ctodo.id === id) {
@@ -80,15 +85,27 @@ const TodoTemplate = () => {
 
     setTodos(copytoods);
     */
-    setTodos(
-      todos.map((todo) =>
-        todo.id === id ? { ...todo, done: !todo.done } : todo
-      )
-    );
+    // setTodos(
+    //   todos.map((todo) =>
+    //     todo.id === id ? { ...todo, done: !todo.done } : todo
+    //   )
+    // );
   };
 
   // 체크가 안된 할일의 개수 카운트 하기
   const countRestTodo = (id) => todos.filter((todo) => !todo.done).length;
+
+  useEffect(() => {
+    // 페이지가 처음 렌더링 됨과 동시에 할 일 목록을 서버에 요청해서 뿌려 주기 위함
+    fetch(API_BASE_URL)
+      .then((res) => res.json())
+      .then((json) => {
+        console.log(json);
+
+        // fetch 를 통해 받아온 데이터를 상태 변수에 할당.
+        setTodos(json.todos);
+      });
+  }, []);
 
   return (
     <div className='TodoTemplate'>
