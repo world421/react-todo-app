@@ -28,7 +28,7 @@ const TodoTemplate = () => {
 
    */
 
-  const addTodo = (todoText) => {
+  const addTodo = async (todoText) => {
     const newTodo = {
       title: todoText,
     }; // fetch를 이용해서 백엔드에 insert 요청 보내야됨.
@@ -41,8 +41,16 @@ const TodoTemplate = () => {
     //   // 가장 최신의 상태, 변경상태로 저장되기전 가장 최신값 !!
     //   return [...oldTodos, newTodo]; // 배열로 갈아끼워야함 !
     // });
+    const res = await fetch(API_BASE_URL, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(newTodo),
+    });
 
-    fetch(API_BASE_URL, {
+    const json = await res.json();
+    setTodos(json.todos);
+
+    /*fetch(API_BASE_URL, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify(newTodo),
@@ -50,7 +58,7 @@ const TodoTemplate = () => {
       .then((res) => res.json())
       .then((json) => {
         setTodos(json.todos);
-      });
+      });*/
   };
 
   // 할 일 삭제 처리 함수
