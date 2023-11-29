@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 // 새로운 전역 컨텍스트 생성e
 export const AuthContext = React.createContext({
@@ -13,6 +13,14 @@ export const AuthContext = React.createContext({
 export const AuthContextProvider = (props) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState('');
+
+  //컴포넌트가 렌더링 될 때 localStrage 에서 로그인 정보를 가지고 와서 상태를 설정.
+  useEffect(() => {
+    if (localStorage.getItem('isLoggedIn') === '1') {
+      setIsLoggedIn(true);
+      setUserName(localStorage.getItem('LOGIN_USERNAME'));
+    }
+  }, []);
 
   // 로그아웃 핸들러
   const logoutHandler = () => {
