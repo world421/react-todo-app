@@ -1,4 +1,3 @@
-import React, { Fragment } from 'react';
 import TodoTemplate from './components/todo/TodoTemplate';
 import './App.css';
 
@@ -9,6 +8,7 @@ import Login from './components/user/Login';
 import { Route, Routes } from 'react-router-dom';
 import { AuthContextProvider } from './utils/AuthContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Test from './utils/Test';
 
 const App = () => {
   return (
@@ -16,9 +16,7 @@ const App = () => {
     <AuthContextProvider>
       <div className='wrapper'>
         {/* 경로에 따라 컴포넌트 렌더링 ~ 
-    라우터가 인식해서 연결해주겠다,
-  
-    */}
+    라우터가 인식해서 연결해주겠다, */}
         <Header />
         <div className='content-wrapper'>
           <Routes>
@@ -33,6 +31,10 @@ const App = () => {
             <Route
               path='join'
               element={<Join />}
+            />
+            <Route
+              path='/*'
+              element={<Test />}
             />
           </Routes>
         </div>
