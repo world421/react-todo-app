@@ -9,6 +9,7 @@ import { Route, Routes } from 'react-router-dom';
 import { AuthContextProvider } from './utils/AuthContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Test from './utils/Test';
+import KakaoLoginHandler from './components/user/KakaoLoginHandler';
 
 const App = () => {
   return (
@@ -35,6 +36,10 @@ const App = () => {
             <Route
               path='/*'
               element={<Test />}
+            />
+            <Route
+            path='/oauth/redirected/kakao'
+            element={<KakaoLoginHandler/>} // 얘를 렌더링해줘
             />
           </Routes>
         </div>
