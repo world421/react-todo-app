@@ -51,9 +51,12 @@ const Header = () => {
       // 해당 이미지를 imgUrl로 변경
       const imgUrl = window.URL.createObjectURL(profileBlob);
       setProfileUrl(imgUrl);
+    } else if (res.headers.get('Content-type').startsWith('text')) {
+      const imageUrl = await res.text();
+      setProfileUrl(imageUrl);
     } else {
-      const err = await res.text();
-      setProfileUrl(err);
+      const err = await res.error();
+      setProfileUrl(null);
     }
   };
 
